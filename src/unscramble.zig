@@ -1,6 +1,8 @@
 const std = @import("std");
 const trie = @import("trie.zig");
 
+const alphabet: []const u8 = "abcdefghijklmnopqrstuvwxyz";
+
 pub const Unscrambler = struct {
     const Self = @This();
 
@@ -38,6 +40,16 @@ pub const Unscrambler = struct {
     }
 
     fn recursiveUnscramble(self: *Self, current_node: *trie.TrieNode, matches: *std.ArrayList([]u8), building: []u8, letters: []const u8) !void {
+        const pos = std.mem.indexOfScalar(u8, letters, '?');
+        if (pos) |found_pos| {
+            for (alphabet) |char| {
+                var new_letters = try self.allocator.dupe(u8, letters);
+                new_letters[found_pos] = char;
+                try self.recursiveUnscramble(current_node, matches, building, new_letters);
+            }
+            return;
+        }
+
         if (current_node.is_word) {
             try matches.append(building);
         }

@@ -22,11 +22,17 @@ pub fn main() !void {
 
     var accepting_input = true;
     while (accepting_input) {
-        std.debug.print("Enter word to search: ", .{});
+        std.debug.print("Enter word to search (/? for help): ", .{});
         const line = try stdin.readUntilDelimiter(&in_buf, '\n');
-        if (std.mem.eql(u8, line, "q")) {
+        if (std.mem.eql(u8, line, "/q")) {
             accepting_input = false;
             std.debug.print("Exiting...\n", .{});
+            continue;
+        }
+        if (std.mem.eql(u8, line, "/?")) {
+            std.debug.print("/? to show this help message.\n", .{});
+            std.debug.print("/q to quit.\n", .{});
+            continue;
         }
 
         try unscrambler.unscramble(&matches, line);
